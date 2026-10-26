@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zen Link Bypass - NDH Fun</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white flex items-center justify-center min-h-screen p-4">
+    <div class="bg-gray-800 p-8 rounded-2xl shadow-2xl max-w-md w-full text-center border border-gray-700">
+        <h1 class="text-3xl font-extrabold mb-2 text-purple-400">Zen Link Bypass</h1>
+        <p class="text-gray-400 text-sm mb-6">Dán link hoặc sử dụng tham số <code class="bg-gray-700 px-1 py-0.5 rounded text-purple-300">?url=</code></p>
+        
+        <!-- Ô nhập link thủ công -->
+        <div class="mb-6">
+            <input type="text" id="input-url" placeholder="Dán link cần bypass vào đây..." 
+                   class="w-full px-4 py-3 rounded-lg bg-gray-700 text-white border border-gray-600 focus:outline-none focus:border-purple-500 mb-3 text-sm">
+            <button onclick="handleManualBypass()" 
+                    class="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 rounded-lg transition duration-200">
+                Bypass Link
+            </button>
+        </div>
+
+        <hr class="border-gray-700 my-4">
+
+        <!-- Trạng thái xử lý -->
+        <p id="status" class="text-gray-400 mb-4 text-sm font-medium">Sẵn sàng xử lý...</p>
+        
+        <div id="result-container" class="hidden">
+            <a id="target-link" href="#" target="_blank" 
+               class="block w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-lg transition duration-200">
+                🚀 Đến Link Đích
+            </a>
+        </div>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const encodedUrl = urlParams.get('url') || urlParams.get('link');
+
+        const statusEl = document.getElementById('status');
+        const resultContainer = document.getElementById('result-container');
+        const targetLinkEl = document.getElementById('target-link');
+
+        function processUrl(url) {
+            statusEl.className = "text-yellow-400 mb-4 text-sm font-medium";
+            statusEl.innerText = "⏳ Đang xử lý link...";
+            resultContainer.classList.add('hidden');
+
+            setTimeout(() => {
+                try {
+                    let decodedUrl = decodeURIComponent(url);
+                    if (!decodedUrl.startsWith('http://') && !decodedUrl.startsWith('https://')) {
+                        decodedUrl = 'https://' + decodedUrl;
+                    }
+                    statusEl.className = "text-green-400 mb-4 text-sm font-medium";
+                    statusEl.innerText = "✅ Bypass thành công!";
+                    targetLinkEl.href = decodedUrl;
+                    resultContainer.classList.remove('hidden');
+                } catch (e) {
+                    statusEl.className = "text-red-400 mb-4 text-sm font-medium";
+                    statusEl.innerText = "❌ Link không hợp lệ!";
+                }
+            }, 1000);
+        }
+
+        if (encodedUrl) {
+            processUrl(encodedUrl);
+        }
+
+        function handleManualBypass() {
+            const inputVal = document.getElementById('input-url').value.trim();
+            if (inputVal) {
+                processUrl(inputVal);
+            } else {
+                statusEl.className = "text-yellow-400 mb-4 text-sm font-medium";
+                statusEl.innerText = "⚠️ Vui lòng nhập link!";
+            }
+        }
+    </script>
+</body>
+</html>
